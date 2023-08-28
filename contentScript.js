@@ -1,20 +1,19 @@
-(() => {
+(()=>{
     let youtubeLeftControls, youtubePlayer;
     let currentVideo = "";
     let currentVideoBookmarks = [];
 
-    chrome.runtime.onMessage.addListener((obj, sender, response) => {
-        const { type, value, videoId } = obj;
+    chrome.runtime.onMessage.addListener((obj,sender,response)=> {
+        const {type,value,videoId} = obj;
 
-        if (type === "NEW") {
+        if (type==="NEW"){
             currentVideo = videoId;
             newVideoLoaded();
         }
     });
 
-    const newVideoLoaded = () => {
+    const newVideoLoaded = async () => {
         const bookmarkBtnExists = document.getElementsByClassName("bookmark-btn")[0];
-        console.log(bookmarkBtnExists);
 
         if (!bookmarkBtnExists) {
             const bookmarkBtn = document.createElement("img");
@@ -31,25 +30,25 @@
         }
     }
 
-    const addNewBookmarkEventHandler = () => {
+    const addNewBookmarkEventHandler= ()=>{
         const currentTime = youtubePlayer.currentTime;
         const newBookmark = {
             time: currentTime,
-            desc: "Bookmark at " + getTime(currentTime),
-        };
+            desc: "Bookmark at "+ getTime(currentTime),
+        }
         console.log(newBookmark);
 
         chrome.storage.sync.set({
-            [currentVideo]: JSON.stringify([...currentVideoBookmarks, newBookmark].sort((a, b) => a.time - b.time))
+           [currentVideo]: JSON.stringify([...currentVideoBookmarks,newBookmark].sort((a, b)=> a.time - b.time)) 
         });
     }
 
     newVideoLoaded();
 })();
 
-const getTime = t => {
+const getTime = t =>{
     var date = new Date(0);
-    date.setSeconds(1);
+    date.setSeconds(t);
 
-    return date.toISOString().substr(11, 0);
+    return date.toISOString().substr(11,8);
 }
